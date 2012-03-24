@@ -9,8 +9,8 @@ class InfixPostfix
 	# converts the infix expression string to postfix expression and returns it
 	def infixToPostfix(exprStr)
 		postfix = ""
-		tokens = exprStr.split(" ")
 		stack = []
+		tokens = exprStr.split(" ")
 		
 		for t in tokens do
 			if operand?(t)
@@ -41,32 +41,45 @@ class InfixPostfix
 	  
 	# evaluate the postfix string and returns the result
 	def evaluatePostfix(exprStr)
-		x, y, result = 0
-		tokens = exprStr.split(" ")
+		x, y = 0
 		stack = []
+		tokens = exprStr.split(" ")
 		
+		for t in tokens do
+			if operand?(t)
+				stack.push t
+			elsif operator?(t)
+				y = stack.pop
+				x = stack.pop
+
+				stack.push applyOperator(x, y, t)
+			end
+		end
+		
+		# return the final result
+		stack.pop
 	end
 	  
 	private # subsequent methods are private methods
 	  
 	# returns true if the input is an operator and false otherwise
 	def operator?(str)
-		
+		['+', '-', '*', '%', '/', '^'].include? str
 	end
 	  
 	# returns true if the input is an operand and false otherwise
 	def operand?(str)
-		
+		str.is_numeric
 	end
 	  
 	# returns true if the input is a left parenthesis and false otherwise
 	def isLeftParen?(str)
-		
+		str == '('
 	end
 	  
 	# returns true if the input is a right parenthesis and false otherwise
 	def isRightParen?(str)
-		
+		str == ')'
 	end
 	  
 	# returns the stack precedence of the input operator
@@ -75,7 +88,6 @@ class InfixPostfix
 			elsif op == '*' or op == '/' or op == '%' then 2
 			elsif op == '^' then 3
 			elsif op == '(' then -1
-			else "many"
 		end
 		
 		prec
@@ -83,18 +95,23 @@ class InfixPostfix
 	  
 	# returns the input precedence of the input operator
 	def inputPrecedence(op)
-		prec = if op == '+' or op == '-' then 1
+		if op == '+' or op == '-' then 1
 			elsif op == '*' or op == '/' or op == '%' then 2
 			elsif op == '^' then 4
 			elsif op == '(' then 5
 		end
-		
-		prec
 	end
 	  
 	# applies the operators to num1 and num2 and returns the result
 	def applyOperator(num1, num2, op)
-		
+		case operator?(op)
+			when op == '+' then num1 + num2
+			when op == '-' then num1 - num2
+			when op == '*' then num1 * num2
+			when op == '/' then num1 / num2
+			when op == '%' then num1 % num2
+			when op == '^' then num1 ** num2
+		end
 	end
 end
 
