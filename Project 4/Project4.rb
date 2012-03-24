@@ -16,27 +16,28 @@ class InfixPostfix
 			if operand?(t)
 				postfix << t << " "
 			elsif operator?(t)
-				# Pop operators (if there are any) from the stack with "stack precedence" equal or higher than the "input precedence" of the current token, and append popped operators to the postfix expression
-				while stack.length > 0 and stackPrecedence(stack.last) >= inputPrecedence(t)
-					postfix << stack.pop << " "
-				end
+				# pop operators (if there are any) from the stack with "stack precedence" equal or higher than the "input precedence" of the current token, and append popped operators to the postfix expression
+				postfix << stack.pop << " " while stack.length > 0 and stackPrecedence(stack.last) >= inputPrecedence(t)
 					
-				# Push the current token onto the stack.
+				# push the current token onto the stack
 				stack.push t
 			elsif isLeftParen?(t)
 				stack.push t
 			elsif isRightParen?(t)
-				# Pop operators from the stack and append them to postfix expression until a left parenthesis is at the top of the stack.
-				while stack.length > 0 and stack.last != '('
-					postfix << stack.pop << " "
-				end
+				# pop operators from the stack and append them to postfix expression until a left parenthesis is at the top of the stack
+				postfix << stack.pop << " " while stack.length > 0 and stack.last != '('
 				
-				# Pop and discard the left parenthesis
+				# pop and discard the left parenthesis
 				if stack.length > 0
 					stack.pop
 				end
 			end
 		end
+		
+		# pop the remaining operators from the stack and append them to postfix expression
+		postfix << stack.pop << " " while stack.length > 0
+		
+		postfix
 	end
 	  
 	# evaluate the postfix string and returns the result
@@ -51,6 +52,8 @@ class InfixPostfix
 			elsif operator?(t)
 				y = stack.pop
 				x = stack.pop
+				
+				puts "Result from apply operator: " << applyOperator(x, y, t) << "\n"
 
 				stack.push applyOperator(x, y, t)
 			end
@@ -69,7 +72,7 @@ class InfixPostfix
 	  
 	# returns true if the input is an operand and false otherwise
 	def operand?(str)
-		str.is_numeric
+		!!Float(str) rescue false
 	end
 	  
 	# returns true if the input is a left parenthesis and false otherwise
@@ -102,13 +105,20 @@ class InfixPostfix
 	  
 	# applies the operators to num1 and num2 and returns the result
 	def applyOperator(num1, num2, op)
-		case operator?(op)
-			when op == '+' then num1 + num2
-			when op == '-' then num1 - num2
-			when op == '*' then num1 * num2
-			when op == '/' then num1 / num2
-			when op == '%' then num1 % num2
-			when op == '^' then num1 ** num2
+		num1 = num1.to_i
+		num2 = num2.to_i
+		
+		# FIXME - We're having data type issues
+		if operator?(op)
+			case op
+				when '+' then num1 + num2
+				when '-' then num1 - num2
+				when '*' then num1 * num2
+				when '/' then num1 / num2
+				when '%' then num1 % num2
+				when '^' then num1 ** num2
+				# else -> throw some sort of error so we don't get nil
+			end
 		end
 	end
 end
@@ -117,7 +127,32 @@ end
 #  main driver for the program - similar to the main() function in Project 2
 #
 def main()
-  
+	puts "(1) Convert Infix to Postfix Expression\n"
+	puts "(2) Evaluate Postfix Expression\n"
+	puts "(3) Quit\n"
+	puts "Enter Selection (1, 2, or 3): "
+	
+	convert = InfixPostfix.new
+	choice = ""
+	
+	while choice != '3'
+		choice = gets.chomp
+		
+		case choice
+			when '1'
+				puts "Enter infix notation: "
+				postfix = convert.infixToPostfix(gets);
+				puts "Postfix: " << postfix << "\n"
+				puts "Value: " << convert.evaluatePostfix(postfix.to_s) << "\n"
+			when '2'
+				puts "Enter prefix notation: "
+				puts "Value: " << convert.evaluatePostfix(gets.chomp) << "\n"
+			when '3'
+				puts "Bye"
+			else
+				puts "Invalid selection, try again\n"
+		end
+	end
 end
 
 # invoke main function
