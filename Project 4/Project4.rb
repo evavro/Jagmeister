@@ -53,7 +53,7 @@ class InfixPostfix
 				y = stack.pop
 				x = stack.pop
 				
-				puts "Result from apply operator: " << applyOperator(x, y, t) << "\n"
+				#puts "Result from apply operator: " << applyOperator(x, y, t) << "\n"
 
 				stack.push applyOperator(x, y, t)
 			end
@@ -105,21 +105,25 @@ class InfixPostfix
 	  
 	# applies the operators to num1 and num2 and returns the result
 	def applyOperator(num1, num2, op)
-		num1 = num1.to_i
-		num2 = num2.to_i
+		num1 = Integer(num1)
+		num2 = Integer(num2)
+		result = 0
 		
-		# FIXME - We're having data type issues
+		puts "" << (num1 + num2).to_s
+	
 		if operator?(op)
-			case op
-				when '+' then num1 + num2
-				when '-' then num1 - num2
-				when '*' then num1 * num2
-				when '/' then num1 / num2
-				when '%' then num1 % num2
-				when '^' then num1 ** num2
-				# else -> throw some sort of error so we don't get nil
+			result = case op
+				when '+' then return num1 + num2
+				when '-' then return num1 - num2
+				when '*' then return num1 * num2
+				when '/' then return num1 / num2
+				when '%' then return num1 % num2
+				when '^' then return num1 ** num2
+				#else -> throw some sort of error so we don't get nil
 			end
 		end
+		
+		result
 	end
 end
 
@@ -143,12 +147,12 @@ def main()
 				puts "Enter infix notation: "
 				postfix = convert.infixToPostfix(gets);
 				puts "Postfix: " << postfix << "\n"
-				puts "Value: " << convert.evaluatePostfix(postfix.to_s) << "\n"
+				puts "Value: " << convert.evaluatePostfix(postfix) << "\n"
 			when '2'
 				puts "Enter prefix notation: "
-				puts "Value: " << convert.evaluatePostfix(gets.chomp) << "\n"
+				puts "Value: " << convert.evaluatePostfix(gets).to_s << "\n"
 			when '3'
-				puts "Bye"
+				puts "Bye, thanks for using"
 			else
 				puts "Invalid selection, try again\n"
 		end
