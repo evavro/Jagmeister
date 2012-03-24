@@ -84,13 +84,11 @@ class InfixPostfix
 	  
 	# returns the stack precedence of the input operator
 	def stackPrecedence(op)
-		prec = if op == '+' or op == '-' then 1
+		if op == '+' or op == '-' then 1
 			elsif op == '*' or op == '/' or op == '%' then 2
 			elsif op == '^' then 3
 			elsif op == '(' then -1
 		end
-		
-		prec
 	end
 	  
 	# returns the input precedence of the input operator
