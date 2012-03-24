@@ -1,5 +1,3 @@
-#!/usr/bin/ruby -w
-
 #
 # InfixPostfix class contains methods for infix to postfix conversion and
 # postfix expression evaluation.
@@ -7,6 +5,7 @@
 class InfixPostfix
   
 	# converts the infix expression string to postfix expression and returns it
+	# FIXME - Broken on jag's second test case
 	def infixToPostfix(exprStr)
 		postfix = ""
 		stack = []
@@ -52,10 +51,8 @@ class InfixPostfix
 			elsif operator?(t)
 				y = stack.pop
 				x = stack.pop
-				
-				#puts "Result from apply operator: " << applyOperator(x, y, t) << "\n"
 
-				stack.push applyOperator(x, y, t)
+				stack.push applyOperator(x, y, t).to_s
 			end
 		end
 		
@@ -109,8 +106,6 @@ class InfixPostfix
 		num2 = Integer(num2)
 		result = 0
 		
-		puts "" << (num1 + num2).to_s
-	
 		if operator?(op)
 			result = case op
 				when '+' then return num1 + num2
