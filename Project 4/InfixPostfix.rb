@@ -1,3 +1,5 @@
+# Project 4
+# Erik Vavro & Jim Hanley
 #
 # InfixPostfix class contains methods for infix to postfix conversion and
 # postfix expression evaluation.
@@ -35,7 +37,8 @@ class InfixPostfix
 		# pop the remaining operators from the stack and append them to postfix expression
 		postfix << stack.pop << " " while stack.length > 0
 		
-		postfix
+		# trim the last space and return the result
+		postfix[0...postfix.length-1]
 	end
 	  
 	# evaluate the postfix string and returns the result
@@ -56,7 +59,7 @@ class InfixPostfix
 		end
 		
 		# return the final result
-		stack.pop
+		Integer(stack.pop)
 	end
 	  
 	private # subsequent methods are private methods
@@ -105,7 +108,7 @@ class InfixPostfix
 		num2 = Integer(num2)
 		result = 0
 		
-		if operator?(op)
+		if operator? op
 			result = case op
 				when '+' then return num1 + num2
 				when '-' then return num1 - num2

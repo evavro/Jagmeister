@@ -1,0 +1,15 @@
+# Before you can do anything, you need to add all of your changes to one or more commits (only add the files you want in THIS commit, then proceed to the next step)
+
+git add file.txt
+or
+git add -A
+
+# Next you have to commit the changes
+
+git commit -m "Useful description of your changes so others can know what you did"
+
+# Push your changes
+
+git push
+
+git pull
