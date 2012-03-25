@@ -11,17 +11,17 @@ class InfixPostfix
 		tokens = exprStr.split(" ")
 		
 		for t in tokens do
-			if operand?(t)
+			if operand? t
 				postfix << t << " "
-			elsif operator?(t)
+			elsif operator? t
 				# pop operators (if there are any) from the stack with "stack precedence" equal or higher than the "input precedence" of the current token, and append popped operators to the postfix expression
 				postfix << stack.pop << " " while stack.length > 0 and stackPrecedence(stack.last) >= inputPrecedence(t)
 					
 				# push the current token onto the stack
 				stack.push t
-			elsif leftParen?(t)
+			elsif leftParen? t
 				stack.push t
-			elsif rightParen?(t)
+			elsif rightParen? t
 				# pop operators from the stack and append them to postfix expression until a left parenthesis is at the top of the stack
 				postfix << stack.pop << " " while stack.length > 0 and stack.last != '('
 				
@@ -45,9 +45,9 @@ class InfixPostfix
 		tokens = exprStr.split(" ")
 		
 		for t in tokens do
-			if operand?(t)
+			if operand? t
 				stack.push t
-			elsif operator?(t)
+			elsif operator? t
 				y = stack.pop
 				x = stack.pop
 
@@ -127,12 +127,13 @@ end
 puts "(1) Convert Infix to Postfix Expression\n"
 puts "(2) Evaluate Postfix Expression\n"
 puts "(3) Quit\n"
-puts "Enter Selection (1, 2, or 3): "
 	
 convert = InfixPostfix.new
 choice = ""
 	
 while choice != '3'
+	puts "Enter Selection (1, 2, or 3): "
+	
 	choice = gets.chomp
 	
 	case choice
