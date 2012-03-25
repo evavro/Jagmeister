@@ -5,7 +5,6 @@
 class InfixPostfix
   
 	# converts the infix expression string to postfix expression and returns it
-	# FIXME - Broken on jag's second test case
 	def infixToPostfix(exprStr)
 		postfix = ""
 		stack = []
@@ -20,9 +19,9 @@ class InfixPostfix
 					
 				# push the current token onto the stack
 				stack.push t
-			elsif isLeftParen?(t)
+			elsif leftParen?(t)
 				stack.push t
-			elsif isRightParen?(t)
+			elsif rightParen?(t)
 				# pop operators from the stack and append them to postfix expression until a left parenthesis is at the top of the stack
 				postfix << stack.pop << " " while stack.length > 0 and stack.last != '('
 				
