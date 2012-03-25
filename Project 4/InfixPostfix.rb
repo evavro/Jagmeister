@@ -73,12 +73,12 @@ class InfixPostfix
 	end
 	  
 	# returns true if the input is a left parenthesis and false otherwise
-	def isLeftParen?(str)
+	def leftParen?(str)
 		str == '('
 	end
 	  
 	# returns true if the input is a right parenthesis and false otherwise
-	def isRightParen?(str)
+	def rightParen?(str)
 		str == ')'
 	end
 	  
@@ -125,34 +125,29 @@ end
 #
 #  main driver for the program - similar to the main() function in Project 2
 #
-def main()
-	puts "(1) Convert Infix to Postfix Expression\n"
-	puts "(2) Evaluate Postfix Expression\n"
-	puts "(3) Quit\n"
-	puts "Enter Selection (1, 2, or 3): "
+puts "(1) Convert Infix to Postfix Expression\n"
+puts "(2) Evaluate Postfix Expression\n"
+puts "(3) Quit\n"
+puts "Enter Selection (1, 2, or 3): "
 	
-	convert = InfixPostfix.new
-	choice = ""
+convert = InfixPostfix.new
+choice = ""
 	
-	while choice != '3'
-		choice = gets.chomp
-		
-		case choice
-			when '1'
-				puts "Enter infix notation: "
-				postfix = convert.infixToPostfix(gets);
-				puts "Postfix: " << postfix << "\n"
-				puts "Value: " << convert.evaluatePostfix(postfix) << "\n"
-			when '2'
-				puts "Enter prefix notation: "
-				puts "Value: " << convert.evaluatePostfix(gets).to_s << "\n"
-			when '3'
-				puts "Bye, thanks for using"
-			else
-				puts "Invalid selection, try again\n"
-		end
+while choice != '3'
+	choice = gets.chomp
+	
+	case choice
+		when '1'
+			puts "Enter infix notation: "
+			postfix = convert.infixToPostfix(gets);
+			puts "Postfix: " << postfix << "\n"
+			puts "Value: " << convert.evaluatePostfix(postfix) << "\n"
+		when '2'
+			puts "Enter prefix notation: "
+			puts "Value: " << convert.evaluatePostfix(gets).to_s << "\n"
+		when '3'
+			puts "Bye, thanks for using"
+		else
+			puts "Invalid selection, try again\n"
 	end
 end
-
-# invoke main function
-main()
