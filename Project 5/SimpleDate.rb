@@ -131,14 +131,14 @@ class SimpleDate
   #
   def nextDate    
     # TODO: Change this to use daysFromNow(1)
-    newYear, newMonth, newDay = @year, @month, @day + 1
+    #newYear, newMonth, newDay = @year, @month, @day + 1
 
     if newDay > daysInMonth(@month, @year)
       newDay = 1
       
-      if newMonth++ > NUM_MONTHS
+      if newMonth += 1 > NUM_MONTHS
         newMonth = 1
-        year++
+        year += 1
       end
     end
 
