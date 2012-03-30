@@ -147,7 +147,7 @@ while choice != '3'
 			puts "Value: " << convert.evaluatePostfix(postfix) << "\n"
 		when '2'
 			puts "Enter prefix notation: "
-			puts "Value: " << convert.evaluatePostfix(gets).to_s << "\n"
+			puts "Value: " << convert.evaluatePostfix(gets) << "\n"
 		when '3'
 			puts "Bye, thanks for using"
 		else
