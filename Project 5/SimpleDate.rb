@@ -63,6 +63,8 @@ class SimpleDate
   #
   def <=>(other)
     # check year, then month, then day
+    return nil unless other.instance_of?(SimpleDate)
+        self.hashCode <=> other.hashCode
   end
   
   #
@@ -74,7 +76,7 @@ class SimpleDate
     other = SimpleDate.new(MIN_YEAR, 1, 1)
     
     # Formula to determine day of week as an int.
-    dayWeek = (daysFromNow(other) % DAYS_WEEK) + 1
+    dayWeek = (daysFromNow(other) % DAYS_WEEK).next
  
     # Wrap around the day if it's a Sunday
     dayWeek != DAYS_WEEK ? dayWeek : 0
@@ -115,7 +117,7 @@ class SimpleDate
   # Returns the number of days that have elapsed (including this day) since 1 January. (aka dayOfYear)
   #
   def ordinalDate
-    daysTotal = 0
+    daysTotal = @day
     
     # Loop through every month up to date and add their days
     for i in 1..@month do
@@ -123,7 +125,7 @@ class SimpleDate
     end
     
     # Add how many days into month to daysTotal and return it
-    daysTotal += @day
+    daysTotal
   end
   
   #
@@ -167,11 +169,18 @@ class SimpleDate
   # Raise ArgumentError if the new date is before the minimum allowable date (1/1/1753).
   #
   def daysAgo(n)
-    #newYear, newMonth, newDay = @year, @month, @day - n
+    #monthsLost = Integer(n % NUM_MONTHS)
+    #yearsLost = Integer(monthsLost % NUM_MONTHS)
+    #newDay = ?
 
-    #TODO
+    newDate = SimpleDate.new(newMonth, newDay, newYear)
 
-    SimpleDate.new(newMonth, newDay, newYear)
+    # this can probably be simplified to a closure somehow
+    until n < 0 do
+      newDate = newDate.prevDate
+    end
+
+    newDate 
   end
   
   #
