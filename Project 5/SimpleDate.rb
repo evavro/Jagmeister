@@ -62,7 +62,6 @@ class SimpleDate
   # object is not comparable then the <=> operator should return nil.
   #
   def <=>(other)
-    # check year, then month, then day
     return nil unless other.instance_of?(SimpleDate)
         self.hashCode <=> other.hashCode
   end
@@ -93,23 +92,6 @@ class SimpleDate
   # Returns true if this date is in a leap year, false otherwise
   #
   def leapYear?
-  #  if @year % 400 == 0
-  #    true
-  #  elsif @year % 100 == 0
-  #    false
-  #  elsif @year % 4 == 0
-  #    true
-
-    # Set to true if year is a factor of 4.
-  #  isleap = @year % 4 == 0;
-
-  #  if @year % 400 == 0
-  #    isleap = true;
-  #  elsif @year % 100 == 0
-  #    isleap = false;
-
-   # isleap
-
     self.leapYear(@year)
   end
   
@@ -117,7 +99,7 @@ class SimpleDate
   # Returns the number of days that have elapsed (including this day) since 1 January. (aka dayOfYear)
   #
   def ordinalDate
-    daysTotal = @day
+    daysTotal = 0
     
     # Loop through every month up to date and add their days
     for i in 1..@month do
@@ -125,7 +107,7 @@ class SimpleDate
     end
     
     # Add how many days into month to daysTotal and return it
-    daysTotal
+    return daysTotal += @day - 1
   end
   
   #
@@ -156,7 +138,7 @@ class SimpleDate
     newYear, newMonth, newDay = @year, @month, @day - 1
 
     if newDay < 1
-      newMonth = newMonth - 1 == 0 ? NUM_MONTHS : newMonth -1
+      newMonth = newMonth - 1 == 0 ? NUM_MONTHS : newMonth - 1
       newDay = daysInMonth(newMonth, @year)
     end
 
@@ -169,15 +151,12 @@ class SimpleDate
   # Raise ArgumentError if the new date is before the minimum allowable date (1/1/1753).
   #
   def daysAgo(n)
-    #monthsLost = Integer(n % NUM_MONTHS)
-    #yearsLost = Integer(monthsLost % NUM_MONTHS)
-    #newDay = ?
-
-    newDate = SimpleDate.new(newMonth, newDay, newYear)
+    newDate = self
 
     # this can probably be simplified to a closure somehow
-    until n < 0 do
+    until n < 1 do
       newDate = newDate.prevDate
+      n -= 1
     end
 
     newDate 
@@ -189,9 +168,14 @@ class SimpleDate
   # Raise ArgumentError if the new date is before the minimum allowable date (1/1/1753).
   #
   def daysFromNow(n)
-  
-    #TODO
+    newDate = self
 
+    until n < 1 do
+      newDate = newDate.nextDate
+      n -= 1
+    end
+
+    newDate
   end 
 
   #
