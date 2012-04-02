@@ -45,11 +45,17 @@ class SimpleDate
   #     month, day, and year are not Fixnum type, or
   #     values of month, day, and year do not represent a valid date
   #
-  def initialize(month, day, year)
+  def initialize(month=1, day=1, year=2012)
     # We should take advantage of blocks and yield here
     #if !(month.kind_of?(Fixnum) and day.kind_of?(Fixnum) and day.kind_of?(Fixnum)) or !(self.validDate?(month, day, year))
     #  raise ArgumentError.new("One or more date parameters are not valid dates")
     #end
+
+    #SimpleDate.validDate?(month, day, year)
+
+    puts "Months? " << month.to_s
+    puts "Days? " << day.to_s
+    puts "Years? " << year.to_s
 
     @month = month
     @day = day
@@ -73,7 +79,7 @@ class SimpleDate
   #
   def dayOfWeek
     # Earliest possible Gregorian calendar date.
-    other = SimpleDate.new(MIN_YEAR, 1, 1)
+    other = SimpleDate.new(1, 1, MIN_YEAR)
     
     # Formula to determine day of week as an int.
     dayWeek = (daysFromNow(other.ordinalDate) % DAYS_WEEK).next
@@ -86,14 +92,14 @@ class SimpleDate
   # Returns the number of days in the year of this date
   #
   def daysInYear
-    self.daysInYear(@year)
+    SimpleDate.daysInYear(@year)
   end
   
   #
   # Returns true if this date is in a leap year, false otherwise
   #
   def leapYear?
-    self.leapYear(@year)
+    SimpleDate.leapYear(@year)
   end
   
   #
@@ -102,10 +108,9 @@ class SimpleDate
   def ordinalDate
     daysTotal = 0
     
-    # This works if I put it in leapYear? -- WHY NOT HERE?
     # Loop through every month up to date and add their days
-    for i in 1..@month do
-      daysTotal += daysInMonth(i, @year)
+    for i in 1...@month do
+      daysTotal += SimpleDate.daysInMonth(i, @year)
     end
     
     # Add how many days into month to daysTotal and return it
@@ -141,7 +146,7 @@ class SimpleDate
     if newDay < 1
       newMonth = newMonth - 1 == 0 ? NUM_MONTHS : newMonth - 1
       newDay = daysInMonth(newMonth, @year)
-      newYear = newMonth == 12 ? 1 : year - 1
+      newYear = newMonth == NUM_MONTHS ? 1 : year - 1
     end
 
     SimpleDate.new(newMonth, newDay, newYear)
@@ -200,21 +205,26 @@ class SimpleDate
   # Returns true if the given year is a leap year, false otherwise. 
   #
   def self.leapYear?(year)
-    @year % 4 == 0 unless (@year % 100 == 0 and @year % 400 != 0)
+    year % 4 == 0 unless (year % 100 == 0 and year % 400 != 0)
   end
 
   #
   # Returns the number of days in the given year.
   #
   def self.daysInYear(year)
-    self.leapYear? year ? DAYS_LEAP_YEAR : DAYS_YEAR
+    leapYear?(year) ? DAYS_LEAP_YEAR : DAYS_YEAR
   end
  
   #
   # Class method that returns the number of days in a month for a given year.
   #
   def self.daysInMonth(month, year)
-      DAYS_IN_MONTH[month] + (isLeapYear? year and month == 2 ? 1 : 0)
+    #add = (leapYear?(year) and month == 2) ? 1 : 0
+    add = if leapYear?(year) and month == 2 then 1 else 0 end
+
+    puts "Days in month (" << month.to_s << "): " << DAYS_IN_MONTH[month].to_s
+
+    return DAYS_IN_MONTH[month] + 1
   end
   
   #
@@ -222,21 +232,26 @@ class SimpleDate
   #
   def self.validDate?(month, day, year)
     [month, day, year].each do |p|
-       raise ArgumentError.new(p << " is not a valid Fixnum") unless p.kind_of?(Fixnum)
+       raise ArgumentError.new(p << " is not a valid date value") unless p.kind_of?(Fixnum)
     end
 
     raise ArgumentError.new("Invalid date") unless
-        year >= MIN_YEAR and month 1...NUM_MONTHS and day 1...daysInYear and day 1...daysInMonth(month, year)
+        year >= MIN_YEAR and
+        (1...NUM_MONTHS).include?(month) and 
+        (1...self.daysInYear(year)).include?(day) and 
+        (1...daysInMonth(month, year)).include?(day)
+
+    true
   end
 
 end   # end of SimpleDate class
 
 def test
-  testDate = SimpleDate.new(1, 1, 1990)
+  testDate = SimpleDate.new(2, 29, 1900)
 
-  testDate.dayOfWeek
+  #testDate.dayOfWeek
 
-  puts "Valid date?: " << testDate.daysInYear(1)
+  puts "Valid date?: " << SimpleDate.validDate?(2, 29, 1900)
 end
 
 test()
