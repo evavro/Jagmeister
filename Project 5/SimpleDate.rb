@@ -29,6 +29,15 @@ class SimpleDate
   attr_reader :month, :day, :year
   
   #
+  # yields @month, @day, and @year values one at a time in that order
+  #
+  def each
+    yield @month
+    yield @day
+    yield @year
+  end
+
+  #
   # Initializes the instance variables @month, @day, and @year using the values
   # of parameters.
   #
@@ -37,22 +46,14 @@ class SimpleDate
   #     values of month, day, and year do not represent a valid date
   #
   def initialize(month, day, year)
-    if !(month.kind_of?(Fixnum) and day.kind_of?(Fixnum) and day.kind_of?(Fixnum)) or !(month.validDate? and day.validDate? and year.validDate?)
-      raise ArgumentError.new("One or more date parameters are not valid dates")
-    end
+    # We should take advantage of blocks and yield here
+    #if !(month.kind_of?(Fixnum) and day.kind_of?(Fixnum) and day.kind_of?(Fixnum)) or !(self.validDate?(month, day, year))
+    #  raise ArgumentError.new("One or more date parameters are not valid dates")
+    #end
 
     @month = month
     @day = day
     @year = year
-  end
-  
-  #
-  # yields @month, @day, and @year values one at a time in that order
-  #
-  def each
-    yield @month
-    yield @day
-    yield @year
   end
   
   # 
@@ -75,7 +76,7 @@ class SimpleDate
     other = SimpleDate.new(MIN_YEAR, 1, 1)
     
     # Formula to determine day of week as an int.
-    dayWeek = (daysFromNow(other) % DAYS_WEEK).next
+    dayWeek = (daysFromNow(other.ordinalDate) % DAYS_WEEK).next
  
     # Wrap around the day if it's a Sunday
     dayWeek != DAYS_WEEK ? dayWeek : 0
@@ -101,6 +102,7 @@ class SimpleDate
   def ordinalDate
     daysTotal = 0
     
+    # This works if I put it in leapYear? -- WHY NOT HERE?
     # Loop through every month up to date and add their days
     for i in 1..@month do
       daysTotal += daysInMonth(i, @year)
@@ -134,12 +136,12 @@ class SimpleDate
   # previous date is before the MIN_YEAR (i.e.. 1753).
   #
   def prevDate
-    # TODO: Change this to use daysAgo(1)
     newYear, newMonth, newDay = @year, @month, @day - 1
 
     if newDay < 1
       newMonth = newMonth - 1 == 0 ? NUM_MONTHS : newMonth - 1
       newDay = daysInMonth(newMonth, @year)
+      newYear = newMonth == 12 ? 1 : year - 1
     end
 
     SimpleDate.new(newMonth, newDay, newYear)
@@ -152,6 +154,7 @@ class SimpleDate
   #
   def daysAgo(n)
     newDate = self
+    n = Integer(n)
 
     # this can probably be simplified to a closure somehow
     until n < 1 do
@@ -169,6 +172,7 @@ class SimpleDate
   #
   def daysFromNow(n)
     newDate = self
+    n = Integer(n)
 
     until n < 1 do
       newDate = newDate.nextDate
@@ -203,7 +207,7 @@ class SimpleDate
   # Returns the number of days in the given year.
   #
   def self.daysInYear(year)
-    leapYear? year ? DAYS_LEAP_YEAR : DAYS_YEAR
+    self.leapYear? year ? DAYS_LEAP_YEAR : DAYS_YEAR
   end
  
   #
@@ -217,8 +221,22 @@ class SimpleDate
   # Class method that determines if values for month, day, and year represent a valid date.
   #
   def self.validDate?(month, day, year)
-    year >= MIN_YEAR and month 1..NUM_MONTHS and day 0..daysInYear
+    [month, day, year].each do |p|
+       raise ArgumentError.new(p << " is not a valid Fixnum") unless p.kind_of?(Fixnum)
+    end
+
+    raise ArgumentError.new("Invalid date") unless
+        year >= MIN_YEAR and month 1...NUM_MONTHS and day 1...daysInYear and day 1...daysInMonth(month, year)
   end
-  
+
 end   # end of SimpleDate class
 
+def test
+  testDate = SimpleDate.new(1, 1, 1990)
+
+  testDate.dayOfWeek
+
+  puts "Valid date?: " << testDate.daysInYear(1)
+end
+
+test()
