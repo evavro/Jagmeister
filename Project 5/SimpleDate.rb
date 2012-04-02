@@ -45,17 +45,8 @@ class SimpleDate
   #     month, day, and year are not Fixnum type, or
   #     values of month, day, and year do not represent a valid date
   #
-  def initialize(month=1, day=1, year=2012)
-    # We should take advantage of blocks and yield here
-    #if !(month.kind_of?(Fixnum) and day.kind_of?(Fixnum) and day.kind_of?(Fixnum)) or !(self.validDate?(month, day, year))
-    #  raise ArgumentError.new("One or more date parameters are not valid dates")
-    #end
-
-    #SimpleDate.validDate?(month, day, year)
-
-    puts "Months? " << month.to_s
-    puts "Days? " << day.to_s
-    puts "Years? " << year.to_s
+  def initialize(month = 1, day = 1, year = 2012)
+    SimpleDate.validDate?(month, day, year)
 
     @month = month
     @day = day
@@ -121,15 +112,15 @@ class SimpleDate
   # Returns a SimpleDate object representing the next date of this date.
   #
   def nextDate    
-    # TODO: Change this to use daysFromNow(1)
-    #newYear, newMonth, newDay = @year, @month, @day + 1
+    newYear, newMonth, newDay = @year, @month, @day + 1
 
-    if newDay > daysInMonth(@month, @year)
+    if newDay > SimpleDate.daysInMonth(@month, @year)
       newDay = 1
+      newMonth += 1
       
-      if newMonth += 1 > NUM_MONTHS
+      if newMonth > NUM_MONTHS
         newMonth = 1
-        year += 1
+        newYear += 1
       end
     end
 
@@ -145,8 +136,9 @@ class SimpleDate
 
     if newDay < 1
       newMonth = newMonth - 1 == 0 ? NUM_MONTHS : newMonth - 1
-      newDay = daysInMonth(newMonth, @year)
-      newYear = newMonth == NUM_MONTHS ? 1 : year - 1
+      newDay = SimpleDate.daysInMonth(newMonth, @year)
+
+      if newMonth == NUM_MONTHS then newYear -= 1 end
     end
 
     SimpleDate.new(newMonth, newDay, newYear)
@@ -159,7 +151,6 @@ class SimpleDate
   #
   def daysAgo(n)
     newDate = self
-    n = Integer(n)
 
     # this can probably be simplified to a closure somehow
     until n < 1 do
@@ -177,7 +168,6 @@ class SimpleDate
   #
   def daysFromNow(n)
     newDate = self
-    n = Integer(n)
 
     until n < 1 do
       newDate = newDate.nextDate
@@ -219,12 +209,7 @@ class SimpleDate
   # Class method that returns the number of days in a month for a given year.
   #
   def self.daysInMonth(month, year)
-    #add = (leapYear?(year) and month == 2) ? 1 : 0
-    add = if leapYear?(year) and month == 2 then 1 else 0 end
-
-    puts "Days in month (" << month.to_s << "): " << DAYS_IN_MONTH[month].to_s
-
-    return DAYS_IN_MONTH[month] + 1
+    return DAYS_IN_MONTH[month] + ((leapYear?(year) and month == 2) ? 1 : 0)
   end
   
   #
@@ -237,9 +222,9 @@ class SimpleDate
 
     raise ArgumentError.new("Invalid date") unless
         year >= MIN_YEAR and
-        (1...NUM_MONTHS).include?(month) and 
-        (1...self.daysInYear(year)).include?(day) and 
-        (1...daysInMonth(month, year)).include?(day)
+        (1..NUM_MONTHS).include?(month) and 
+        (1..self.daysInYear(year)).include?(day) and 
+        (1..daysInMonth(month, year)).include?(day)
 
     true
   end
@@ -247,11 +232,13 @@ class SimpleDate
 end   # end of SimpleDate class
 
 def test
-  testDate = SimpleDate.new(2, 29, 1900)
+  testDate = SimpleDate.new(2, 28, 2001)
 
-  #testDate.dayOfWeek
-
-  puts "Valid date?: " << SimpleDate.validDate?(2, 29, 1900)
+  puts "Start date: " << testDate.to_s << "\n------------"
+  puts "Previous date?: " << testDate.prevDate.to_s
+  puts "Next date?: " << testDate.nextDate.to_s
+  puts "365 days ago: " << testDate.daysAgo(365).to_s
+  puts "365 days from now: " << testDate.daysFromNow(365).to_s
 end
 
 test()
