@@ -216,17 +216,18 @@ class SimpleDate
   #
   def self.validDate?(month, day, year)
     [month, day, year].each do |p|
-       raise ArgumentError.new(p << " is not a valid date value") unless p.kind_of?(Fixnum)
+       #raise ArgumentError.new(p << " is not a valid date value") unless p.kind_of?(Fixnum)
+       return false unless p.kind_of?(Fixnum)
     end
 
-    raise ArgumentError.new("Invalid date") unless
+    #raise ArgumentError.new("Invalid date") unless
+    return false unless
         year >= MIN_YEAR and
         (1..NUM_MONTHS).include?(month) and 
         (1..self.daysInYear(year)).include?(day) and 
         (1..daysInMonth(month, year)).include?(day)
 
-    # Probably want to change this, false is never returned. Only errors
-    #true
+    true
   end
 
 end   # end of SimpleDate class
