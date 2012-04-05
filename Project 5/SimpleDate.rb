@@ -46,6 +46,7 @@ class SimpleDate
   #     values of month, day, and year do not represent a valid date
   #
   def initialize(month = 1, day = 1, year = 2012)
+    # Ensure that the date is valid
     SimpleDate.validDate?(month, day, year)
 
     @month = month
@@ -73,7 +74,7 @@ class SimpleDate
     other = SimpleDate.new(1, 1, MIN_YEAR)
     
     # Formula to determine day of week as an int.
-    dayWeek = (daysFromNow(other.ordinalDate) % DAYS_WEEK).next
+    dayWeek = (daysFromNow(other.ordinalDate).ordinalDate % DAYS_WEEK)#.next
  
     # Wrap around the day if it's a Sunday
     dayWeek != DAYS_WEEK ? dayWeek : 0
@@ -90,7 +91,7 @@ class SimpleDate
   # Returns true if this date is in a leap year, false otherwise
   #
   def leapYear?
-    SimpleDate.leapYear(@year)
+    SimpleDate.leapYear?(@year)
   end
   
   #
@@ -105,7 +106,7 @@ class SimpleDate
     end
     
     # Add how many days into month to daysTotal and return it
-    return daysTotal += @day - 1
+    return daysTotal += @day # depending on this context, this might be @day - 1
   end
   
   #
@@ -115,12 +116,10 @@ class SimpleDate
     newYear, newMonth, newDay = @year, @month, @day + 1
 
     if newDay > SimpleDate.daysInMonth(@month, @year)
-      newDay = 1
-      newMonth += 1
+      newDay, newMonth = 1, newMonth + 1
       
       if newMonth > NUM_MONTHS
-        newMonth = 1
-        newYear += 1
+        newMonth, newYear = 1, newYear + 1
       end
     end
 
@@ -226,17 +225,27 @@ class SimpleDate
         (1..self.daysInYear(year)).include?(day) and 
         (1..daysInMonth(month, year)).include?(day)
 
-    true
+    # Probably want to change this, false is never returned. Only errors
+    #true
   end
 
 end   # end of SimpleDate class
 
 def test
-  testDate = SimpleDate.new(2, 28, 2001)
+  #testDate = SimpleDate.new(2, 28, 2000) # day before leap year
+  #testDate = SimpleDate.new(2, 29, 2011) # invalid leap year
+  #testDate = SimpleDate.new(2, 29, 2012) # valid leap year
+  #testDate = SimpleDate.new(1, 1, 2012) # ordinal date
+  testDate = SimpleDate.new(12, 31, 2011) # end of normal year
+  #testDate = SimpleDate.new(12, 31, 2012) # end of leap year
 
-  puts "Start date: " << testDate.to_s << "\n------------"
+  puts "Start date: " << testDate.to_s << "\n-----------------------"
+  puts "Ordinal date: " << testDate.ordinalDate.to_s
+  # Day of week may be borked
+  puts "Day of week: " << testDate.dayOfWeek.to_s
   puts "Previous date?: " << testDate.prevDate.to_s
   puts "Next date?: " << testDate.nextDate.to_s
+  puts "Is leap?: " << testDate.leapYear?.to_s
   puts "365 days ago: " << testDate.daysAgo(365).to_s
   puts "365 days from now: " << testDate.daysFromNow(365).to_s
 end
