@@ -47,7 +47,7 @@ class SimpleDate
   #
   def initialize(month = 1, day = 1, year = 2012)
     # Ensure that the date is valid
-    SimpleDate.validDate?(month, day, year)
+    raise ArgumentError.new("Invalid date") unless SimpleDate.validDate?(month, day, year)
 
     @month = month
     @day = day
@@ -74,7 +74,7 @@ class SimpleDate
     other = SimpleDate.new(1, 1, MIN_YEAR)
     
     # Formula to determine day of week as an int.
-    dayWeek = (daysFromNow(other.ordinalDate).ordinalDate % DAYS_WEEK)#.next
+    dayWeek = (daysFromNow(other.ordinalDate).ordinalDate % DAYS_WEEK)#.next 
  
     # Wrap around the day if it's a Sunday
     dayWeek != DAYS_WEEK ? dayWeek : 0
@@ -187,7 +187,7 @@ class SimpleDate
   # Returns a relatively unique hash representing a comparable date. This probably won't be used and/or should be changed
   #
   def hashCode
-    @year * daysInYear(@year) + ordinalDate
+    @year * daysInYear() + ordinalDate
   end
   
   #
@@ -208,7 +208,7 @@ class SimpleDate
   # Class method that returns the number of days in a month for a given year.
   #
   def self.daysInMonth(month, year)
-    return DAYS_IN_MONTH[month] + ((leapYear?(year) and month == 2) ? 1 : 0)
+    DAYS_IN_MONTH[month] + ((leapYear?(year) and month == 2) ? 1 : 0)
   end
   
   #
@@ -216,17 +216,15 @@ class SimpleDate
   #
   def self.validDate?(month, day, year)
     [month, day, year].each do |p|
-       #raise ArgumentError.new(p << " is not a valid date value") unless p.kind_of?(Fixnum)
-       return false unless p.kind_of?(Fixnum)
+       raise ArgumentError.new("#{p} is not a valid date value") unless p.kind_of?(Fixnum)
     end
 
-    #raise ArgumentError.new("Invalid date") unless
+    # ArgumentError.new("Invalid date") and return false unless
     return false unless
         year >= MIN_YEAR and
         (1..NUM_MONTHS).include?(month) and 
         (1..self.daysInYear(year)).include?(day) and 
         (1..daysInMonth(month, year)).include?(day)
-
     true
   end
 
@@ -251,4 +249,4 @@ def test
   puts "365 days from now: " << testDate.daysFromNow(365).to_s
 end
 
-test()
+#test()
