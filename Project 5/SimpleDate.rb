@@ -74,7 +74,7 @@ class SimpleDate
     other = SimpleDate.new(1, 1, MIN_YEAR)
     
     # Formula to determine day of week as an int.
-    dayWeek = (daysFromNow(other.ordinalDate).ordinalDate % DAYS_WEEK)#.next 
+    dayWeek = ((daysFromNow(other.ordinalDate).ordinalDate - 1) % DAYS_WEEK)
  
     # Wrap around the day if it's a Sunday
     dayWeek != DAYS_WEEK ? dayWeek : 0
@@ -191,7 +191,7 @@ class SimpleDate
   # Returns a relatively unique hash representing a comparable date. This probably won't be used and/or should be changed
   #
   def hashCode
-    @year * daysInYear() + ordinalDate
+    @year * daysInYear + ordinalDate
   end
   
   #
@@ -239,8 +239,9 @@ def test
   #testDate = SimpleDate.new(2, 29, 2011) # invalid leap year
   #testDate = SimpleDate.new(2, 29, 2012) # valid leap year
   #testDate = SimpleDate.new(1, 1, 2012) # ordinal date
-  testDate = SimpleDate.new(12, 31, 2011) # end of normal year
+  #testDate = SimpleDate.new(12, 31, 2011) # end of normal year
   #testDate = SimpleDate.new(12, 31, 2012) # end of leap year
+  testDate = SimpleDate.new(4, 8, 2012)
 
   puts "Start date: " << testDate.to_s << "\n-----------------------"
   puts "Ordinal date: " << testDate.ordinalDate.to_s
@@ -253,4 +254,4 @@ def test
   puts "365 days from now: " << testDate.daysFromNow(365).to_s
 end
 
-#test()
+test()
