@@ -151,6 +151,8 @@ class SimpleDate
   def daysAgo(n)
     newDate = self
 
+    return daysFromNow(n * -1) unless n > 0
+
     # this can probably be simplified to a closure somehow
     until n < 1 do
       newDate = newDate.prevDate
@@ -167,6 +169,8 @@ class SimpleDate
   #
   def daysFromNow(n)
     newDate = self
+
+    return daysAgo(n * -1) unless n > 0
 
     until n < 1 do
       newDate = newDate.nextDate
