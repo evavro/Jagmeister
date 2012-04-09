@@ -70,14 +70,15 @@ class SimpleDate
   # the day of the week for this date.
   #
   def dayOfWeek
-    # Earliest possible Gregorian calendar date.
-    other = SimpleDate.new(1, 1, MIN_YEAR)
+    # Implemented using Zeller's congruence algorithm
+
+    zellerMonth = if @month <= 2 then @month + 12 else @month end
+    yearOfCentury = @year % 100
+    century = @year / 100
+    dayWeek = (@day - 1 + ((13 * (zellerMonth + 1)) / 5) + yearOfCentury + (yearOfCentury / 4) + (century / 4) + 5 * century) % 7
     
-    # Formula to determine day of week as an int.
-    dayWeek = ((daysFromNow(other.ordinalDate).ordinalDate - 1) % DAYS_WEEK)
- 
-    # Wrap around the day if it's a Sunday
-    dayWeek != DAYS_WEEK ? dayWeek : 0
+    # Return ISO date
+    ((dayWeek + 5) % 7) + 1
   end
   
   #
@@ -233,25 +234,3 @@ class SimpleDate
   end
 
 end   # end of SimpleDate class
-
-def test
-  #testDate = SimpleDate.new(2, 28, 2000) # day before leap year
-  #testDate = SimpleDate.new(2, 29, 2011) # invalid leap year
-  #testDate = SimpleDate.new(2, 29, 2012) # valid leap year
-  #testDate = SimpleDate.new(1, 1, 2012) # ordinal date
-  #testDate = SimpleDate.new(12, 31, 2011) # end of normal year
-  #testDate = SimpleDate.new(12, 31, 2012) # end of leap year
-  testDate = SimpleDate.new(4, 8, 2012)
-
-  puts "Start date: " << testDate.to_s << "\n-----------------------"
-  puts "Ordinal date: " << testDate.ordinalDate.to_s
-  # Day of week may be borked
-  puts "Day of week: " << testDate.dayOfWeek.to_s
-  puts "Previous date?: " << testDate.prevDate.to_s
-  puts "Next date?: " << testDate.nextDate.to_s
-  puts "Is leap?: " << testDate.leapYear?.to_s
-  puts "365 days ago: " << testDate.daysAgo(365).to_s
-  puts "365 days from now: " << testDate.daysFromNow(365).to_s
-end
-
-test()
